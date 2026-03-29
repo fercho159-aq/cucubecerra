@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     const result = await preference.create({
       body: {
         items: [
-          ...order.items.map((item) => ({
+          ...order.items.map((item: any) => ({
             id: item.id,
             title: item.variant.product.name,
             quantity: item.quantity,
