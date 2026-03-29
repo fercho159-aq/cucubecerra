@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { prisma } from '@/lib/db'
+import type { SitemapProduct, SitemapCategory } from '@/types'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
@@ -18,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     select: { slug: true, updatedAt: true },
   })
 
-  const productPages: MetadataRoute.Sitemap = products.map((product: any) => ({
+  const productPages: MetadataRoute.Sitemap = products.map((product: SitemapProduct) => ({
     url: `${baseUrl}/tienda/${product.slug}`,
     lastModified: product.updatedAt,
     changeFrequency: 'weekly',
@@ -30,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     select: { slug: true, updatedAt: true },
   })
 
-  const categoryPages: MetadataRoute.Sitemap = categories.map((category: any) => ({
+  const categoryPages: MetadataRoute.Sitemap = categories.map((category: SitemapCategory) => ({
     url: `${baseUrl}/categorias/${category.slug}`,
     lastModified: category.updatedAt,
     changeFrequency: 'weekly',

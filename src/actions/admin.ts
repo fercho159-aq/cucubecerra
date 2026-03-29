@@ -5,6 +5,7 @@ import { ORDER_STATUS } from '@/lib/constants'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import type { OrderStatus, PaymentStatus } from '@prisma/client'
 
 export async function getOrders(filters?: { status?: string; page?: number }) {
   const session = await getServerSession(authOptions)
@@ -15,7 +16,7 @@ export async function getOrders(filters?: { status?: string; page?: number }) {
     const perPage = 20
     const skip = (page - 1) * perPage
 
-    const where = filters?.status ? { status: filters.status as any } : {}
+    const where = filters?.status ? { status: filters.status as OrderStatus } : {}
 
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
@@ -51,7 +52,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
   try {
     const order = await prisma.order.update({
       where: { id: orderId },
-      data: { status: status as any },
+      data: { status: status as OrderStatus },
     })
 
     revalidatePath('/')
@@ -135,7 +136,7 @@ export async function updateProduct(id: string, data: FormData) {
         where: { productId: id, orderItems: { some: {} } },
         select: { id: true }
       })
-      const variantIdsWithOrders = variantsWithOrders.map((v: any) => v.id)
+      const variantIdsWithOrders = variantsWithOrders.map((v: { id: string }) => v.id)
 
       // Only delete variants WITHOUT orders
       await tx.variant.deleteMany({
@@ -244,7 +245,7 @@ export async function getDashboardStats() {
         _sum: { total: true },
       }),
       prisma.order.count({
-        where: { status: ORDER_STATUS.pending as any },
+        where: { status: ORDER_STATUS.pending as OrderStatus },
       }),
     ])
 

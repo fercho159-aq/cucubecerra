@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { Preference } from 'mercadopago'
 import { mercadopago } from '@/lib/mercadopago'
 import { prisma } from '@/lib/db'
+import type { OrderItemData } from '@/types'
 
 export async function POST(request: Request) {
   try {
@@ -56,7 +57,7 @@ export async function POST(request: Request) {
     const result = await preference.create({
       body: {
         items: [
-          ...order.items.map((item: any) => ({
+          ...order.items.map((item: OrderItemData) => ({
             id: item.id,
             title: item.variant.product.name,
             quantity: item.quantity,

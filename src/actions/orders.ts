@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { getSessionId } from '@/lib/session'
 import { revalidatePath } from 'next/cache'
 import { SHIPPING_COST, FREE_SHIPPING_THRESHOLD } from '@/lib/constants'
+import type { CartItemData } from '@/types'
 
 export async function createOrder(data: {
   cartId: string
@@ -53,7 +54,7 @@ export async function createOrder(data: {
       const orderNumber = `CB-${nextNumber.toString().padStart(4, '0')}`
 
       // Calculate subtotal from variant prices (use product price since variants don't have price)
-      const subtotal = cart.items.reduce((sum: number, item: any) => {
+      const subtotal = cart.items.reduce((sum: number, item: CartItemData) => {
         return sum + Number(item.variant.product.price) * item.quantity
       }, 0)
 
@@ -76,7 +77,7 @@ export async function createOrder(data: {
           shipping,
           total,
           items: {
-            create: cart.items.map((item: any) => ({
+            create: cart.items.map((item: CartItemData) => ({
               variantId: item.variantId,
               quantity: item.quantity,
               unitPrice: item.variant.product.price,

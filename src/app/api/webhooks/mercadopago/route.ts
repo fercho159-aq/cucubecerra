@@ -3,6 +3,7 @@ import { Payment } from 'mercadopago'
 import { mercadopago } from '@/lib/mercadopago'
 import { ORDER_STATUS, PAYMENT_STATUS } from '@/lib/constants'
 import { prisma } from '@/lib/db'
+import type { OrderStatus, PaymentStatus } from '@prisma/client'
 import crypto from 'crypto'
 
 function verifyWebhookSignature(request: Request, body: string): boolean {
@@ -109,8 +110,8 @@ export async function POST(request: Request) {
           where: { id: order.id },
           data: {
             paymentId: String(paymentId),
-            paymentStatus: mapped.paymentStatus as any,
-            status: mapped.orderStatus as any,
+            paymentStatus: mapped.paymentStatus as PaymentStatus,
+            status: mapped.orderStatus as OrderStatus,
           },
         })
 
@@ -130,8 +131,8 @@ export async function POST(request: Request) {
         where: { id: order.id },
         data: {
           paymentId: String(paymentId),
-          paymentStatus: mapped.paymentStatus as any,
-          status: mapped.orderStatus as any,
+          paymentStatus: mapped.paymentStatus as PaymentStatus,
+          status: mapped.orderStatus as OrderStatus,
         },
       })
     }

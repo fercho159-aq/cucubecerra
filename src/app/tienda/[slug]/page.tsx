@@ -7,6 +7,7 @@ import { formatMXN } from '@/lib/format'
 import Badge from '@/components/ui/Badge'
 import AddToCartButton from '@/components/cart/AddToCartButton'
 import VariantSelector from './VariantSelector'
+import type { VariantData } from '@/types'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -109,7 +110,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
           {/* Variant selector + Add to cart (client component) */}
           <div className="mt-8">
             <VariantSelector
-              variants={product.variants.map((v: any) => ({
+              variants={product.variants.map((v: VariantData) => ({
                 id: v.id,
                 size: v.size,
                 color: v.color,

@@ -1,7 +1,6 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-// Using inline types to avoid Prisma client import issues on Vercel
 
 export async function getProducts(filters?: {
   categorySlug?: string
@@ -9,7 +8,7 @@ export async function getProducts(filters?: {
   maxPrice?: number
   sortBy?: string
 }) {
-  const where: Record<string, any> = { active: true }
+  const where: { active: boolean; category?: { slug: string }; price?: { gte?: number; lte?: number } } = { active: true }
 
   if (filters?.categorySlug) {
     where.category = { slug: filters.categorySlug }
@@ -25,7 +24,7 @@ export async function getProducts(filters?: {
     }
   }
 
-  let orderBy: Record<string, any> = { createdAt: 'desc' }
+  let orderBy: { createdAt?: 'asc' | 'desc'; price?: 'asc' | 'desc'; name?: 'asc' | 'desc' } = { createdAt: 'desc' }
 
   switch (filters?.sortBy) {
     case 'price_asc':
