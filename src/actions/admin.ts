@@ -129,13 +129,13 @@ export async function updateProduct(id: string, data: FormData) {
     const variantsJson = data.get('variants') as string
     const variants = variantsJson ? JSON.parse(variantsJson) : []
 
-    const product = await prisma.$transaction(async (tx) => {
+    const product = await prisma.$transaction(async (tx: any) => {
       // Don't delete variants that have existing orders — set stock to 0 instead
       const variantsWithOrders = await tx.variant.findMany({
         where: { productId: id, orderItems: { some: {} } },
         select: { id: true }
       })
-      const variantIdsWithOrders = variantsWithOrders.map(v => v.id)
+      const variantIdsWithOrders = variantsWithOrders.map((v: any) => v.id)
 
       // Only delete variants WITHOUT orders
       await tx.variant.deleteMany({

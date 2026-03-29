@@ -38,7 +38,7 @@ export async function createOrder(data: {
       throw new Error('El carrito está vacío')
     }
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx: any) => {
       // Generate sequential order number
       const lastOrder = await tx.order.findFirst({
         orderBy: { createdAt: 'desc' },

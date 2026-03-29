@@ -95,7 +95,7 @@ export async function POST(request: Request) {
 
     // Use transaction for approved payments (need to decrement stock + update order)
     if (mpStatus === 'approved' && order.status !== ORDER_STATUS.confirmed) {
-      await prisma.$transaction(async (tx) => {
+      await prisma.$transaction(async (tx: any) => {
         // Decrement stock for each order item
         for (const item of order.items) {
           await tx.variant.update({
