@@ -1,7 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { OrderStatus } from '@prisma/client'
+// String constants matching the OrderStatus enum (can't import Prisma in client components)
+const OS = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  shipped: 'shipped',
+  delivered: 'delivered',
+  cancelled: 'cancelled',
+  refunded: 'refunded',
+} as const
 import { getOrders, updateOrderStatus } from '@/actions/admin'
 
 type OrderRow = {
@@ -35,21 +43,21 @@ function formatDate(date: string) {
 
 const statusOptions = [
   { value: '', label: 'Todos' },
-  { value: OrderStatus.pending, label: 'Pendiente' },
-  { value: OrderStatus.confirmed, label: 'Confirmado' },
-  { value: OrderStatus.shipped, label: 'Enviado' },
-  { value: OrderStatus.delivered, label: 'Entregado' },
-  { value: OrderStatus.cancelled, label: 'Cancelado' },
-  { value: OrderStatus.refunded, label: 'Reembolsado' },
+  { value: OS.pending, label: 'Pendiente' },
+  { value: OS.confirmed, label: 'Confirmado' },
+  { value: OS.shipped, label: 'Enviado' },
+  { value: OS.delivered, label: 'Entregado' },
+  { value: OS.cancelled, label: 'Cancelado' },
+  { value: OS.refunded, label: 'Reembolsado' },
 ]
 
 const statusLabels: Record<string, string> = {
-  [OrderStatus.pending]: 'Pendiente',
-  [OrderStatus.confirmed]: 'Confirmado',
-  [OrderStatus.shipped]: 'Enviado',
-  [OrderStatus.delivered]: 'Entregado',
-  [OrderStatus.cancelled]: 'Cancelado',
-  [OrderStatus.refunded]: 'Reembolsado',
+  [OS.pending]: 'Pendiente',
+  [OS.confirmed]: 'Confirmado',
+  [OS.shipped]: 'Enviado',
+  [OS.delivered]: 'Entregado',
+  [OS.cancelled]: 'Cancelado',
+  [OS.refunded]: 'Reembolsado',
 }
 
 export default function PedidosPage() {
@@ -63,7 +71,7 @@ export default function PedidosPage() {
     setLoading(true)
     try {
       const data = await getOrders({
-        status: (statusFilter as OrderStatus) || undefined,
+        status: (statusFilter as string) || undefined,
         page,
       })
       setOrders(data.orders as unknown as OrderRow[])
@@ -79,7 +87,7 @@ export default function PedidosPage() {
     loadOrders()
   }, [statusFilter, page])
 
-  async function handleStatusChange(orderId: string, newStatus: OrderStatus) {
+  async function handleStatusChange(orderId: string, newStatus: string) {
     try {
       await updateOrderStatus(orderId, newStatus)
       setOrders(
@@ -168,13 +176,13 @@ export default function PedidosPage() {
                     <td className="px-5 py-3">
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                          order.status === OrderStatus.confirmed
+                          order.status === OS.confirmed
                             ? 'bg-green-100 text-green-700'
-                            : order.status === OrderStatus.pending
+                            : order.status === OS.pending
                               ? 'bg-yellow-100 text-yellow-700'
-                              : order.status === OrderStatus.cancelled || order.status === OrderStatus.refunded
+                              : order.status === OS.cancelled || order.status === OS.refunded
                                 ? 'bg-red-100 text-red-700'
-                                : order.status === OrderStatus.shipped
+                                : order.status === OS.shipped
                                   ? 'bg-blue-100 text-blue-700'
                                   : 'bg-purple-100 text-purple-700'
                         }`}
@@ -189,7 +197,7 @@ export default function PedidosPage() {
                       <select
                         value={order.status}
                         onChange={(e) =>
-                          handleStatusChange(order.id, e.target.value as OrderStatus)
+                          handleStatusChange(order.id, e.target.value as string)
                         }
                         className="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
                       >

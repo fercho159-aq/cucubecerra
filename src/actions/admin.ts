@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
-export async function getOrders(filters?: { status?: OrderStatus; page?: number }) {
+export async function getOrders(filters?: { status?: string; page?: number }) {
   const session = await getServerSession(authOptions)
   if (!session) throw new Error("No autorizado")
 
@@ -15,7 +15,7 @@ export async function getOrders(filters?: { status?: OrderStatus; page?: number 
     const perPage = 20
     const skip = (page - 1) * perPage
 
-    const where = filters?.status ? { status: filters.status } : {}
+    const where = filters?.status ? { status: filters.status as OrderStatus } : {}
 
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
@@ -44,14 +44,14 @@ export async function getOrders(filters?: { status?: OrderStatus; page?: number 
   }
 }
 
-export async function updateOrderStatus(orderId: string, status: OrderStatus) {
+export async function updateOrderStatus(orderId: string, status: string) {
   const session = await getServerSession(authOptions)
   if (!session) throw new Error("No autorizado")
 
   try {
     const order = await prisma.order.update({
       where: { id: orderId },
-      data: { status },
+      data: { status: status as OrderStatus },
     })
 
     revalidatePath('/')

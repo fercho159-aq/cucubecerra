@@ -1,7 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { OrderStatus } from '@prisma/client'
+const OS = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  shipped: 'shipped',
+  delivered: 'delivered',
+  cancelled: 'cancelled',
+  refunded: 'refunded',
+} as const
 import { getDashboardStats, getOrders } from '@/actions/admin'
 import Link from 'next/link'
 
@@ -41,12 +48,12 @@ function formatDate(date: string) {
 }
 
 const statusLabels: Record<string, string> = {
-  [OrderStatus.pending]: 'Pendiente',
-  [OrderStatus.confirmed]: 'Confirmado',
-  [OrderStatus.shipped]: 'Enviado',
-  [OrderStatus.delivered]: 'Entregado',
-  [OrderStatus.cancelled]: 'Cancelado',
-  [OrderStatus.refunded]: 'Reembolsado',
+  [OS.pending]: 'Pendiente',
+  [OS.confirmed]: 'Confirmado',
+  [OS.shipped]: 'Enviado',
+  [OS.delivered]: 'Entregado',
+  [OS.cancelled]: 'Cancelado',
+  [OS.refunded]: 'Reembolsado',
 }
 
 export default function AdminDashboardPage() {
@@ -178,11 +185,11 @@ export default function AdminDashboardPage() {
                   <td className="px-5 py-3">
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        order.status === OrderStatus.confirmed
+                        order.status === OS.confirmed
                           ? 'bg-green-100 text-green-700'
-                          : order.status === OrderStatus.pending
+                          : order.status === OS.pending
                             ? 'bg-yellow-100 text-yellow-700'
-                            : order.status === OrderStatus.cancelled || order.status === OrderStatus.refunded
+                            : order.status === OS.cancelled || order.status === OS.refunded
                               ? 'bg-red-100 text-red-700'
                               : 'bg-blue-100 text-blue-700'
                       }`}
