@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Payment } from 'mercadopago'
-import { OrderStatus, PaymentStatus } from '@prisma/client'
 import { mercadopago } from '@/lib/mercadopago'
+import { ORDER_STATUS, PAYMENT_STATUS } from '@/lib/constants'
 import { prisma } from '@/lib/db'
 import crypto from 'crypto'
 
@@ -82,19 +82,19 @@ export async function POST(request: Request) {
     const mpStatus = paymentData.status || 'pending'
 
     // Map MercadoPago status to order status
-    const statusMap: Record<string, { orderStatus: OrderStatus; paymentStatus: PaymentStatus }> = {
-      approved: { orderStatus: OrderStatus.confirmed, paymentStatus: PaymentStatus.approved },
-      rejected: { orderStatus: OrderStatus.cancelled, paymentStatus: PaymentStatus.rejected },
-      cancelled: { orderStatus: OrderStatus.cancelled, paymentStatus: PaymentStatus.cancelled },
-      refunded: { orderStatus: OrderStatus.refunded, paymentStatus: PaymentStatus.refunded },
-      in_process: { orderStatus: order.status, paymentStatus: PaymentStatus.pending },
-      pending: { orderStatus: order.status, paymentStatus: PaymentStatus.pending },
+    const statusMap: Record<string, { orderStatus: string; paymentStatus: string }> = {
+      approved: { orderStatus: ORDER_STATUS.confirmed, paymentStatus: PAYMENT_STATUS.approved },
+      rejected: { orderStatus: ORDER_STATUS.cancelled, paymentStatus: PAYMENT_STATUS.rejected },
+      cancelled: { orderStatus: ORDER_STATUS.cancelled, paymentStatus: PAYMENT_STATUS.cancelled },
+      refunded: { orderStatus: ORDER_STATUS.refunded, paymentStatus: PAYMENT_STATUS.refunded },
+      in_process: { orderStatus: order.status, paymentStatus: PAYMENT_STATUS.pending },
+      pending: { orderStatus: order.status, paymentStatus: PAYMENT_STATUS.pending },
     }
 
-    const mapped = statusMap[mpStatus] || { orderStatus: order.status, paymentStatus: PaymentStatus.pending }
+    const mapped = statusMap[mpStatus] || { orderStatus: order.status, paymentStatus: PAYMENT_STATUS.pending }
 
     // Use transaction for approved payments (need to decrement stock + update order)
-    if (mpStatus === 'approved' && order.status !== OrderStatus.confirmed) {
+    if (mpStatus === 'approved' && order.status !== ORDER_STATUS.confirmed) {
       await prisma.$transaction(async (tx) => {
         // Decrement stock for each order item
         for (const item of order.items) {
@@ -109,8 +109,8 @@ export async function POST(request: Request) {
           where: { id: order.id },
           data: {
             paymentId: String(paymentId),
-            paymentStatus: mapped.paymentStatus,
-            status: mapped.orderStatus,
+            paymentStatus: mapped.paymentStatus as any,
+            status: mapped.orderStatus as any,
           },
         })
 
@@ -130,8 +130,8 @@ export async function POST(request: Request) {
         where: { id: order.id },
         data: {
           paymentId: String(paymentId),
-          paymentStatus: mapped.paymentStatus,
-          status: mapped.orderStatus,
+          paymentStatus: mapped.paymentStatus as any,
+          status: mapped.orderStatus as any,
         },
       })
     }

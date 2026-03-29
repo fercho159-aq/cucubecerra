@@ -1,7 +1,7 @@
 'use server'
 
-import { OrderStatus } from '@prisma/client'
 import { prisma } from '@/lib/db'
+import { ORDER_STATUS } from '@/lib/constants'
 import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -15,7 +15,7 @@ export async function getOrders(filters?: { status?: string; page?: number }) {
     const perPage = 20
     const skip = (page - 1) * perPage
 
-    const where = filters?.status ? { status: filters.status as OrderStatus } : {}
+    const where = filters?.status ? { status: filters.status as any } : {}
 
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
@@ -51,7 +51,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
   try {
     const order = await prisma.order.update({
       where: { id: orderId },
-      data: { status: status as OrderStatus },
+      data: { status: status as any },
     })
 
     revalidatePath('/')
@@ -244,7 +244,7 @@ export async function getDashboardStats() {
         _sum: { total: true },
       }),
       prisma.order.count({
-        where: { status: OrderStatus.pending },
+        where: { status: ORDER_STATUS.pending as any },
       }),
     ])
 
