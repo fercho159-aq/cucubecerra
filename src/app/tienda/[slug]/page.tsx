@@ -68,7 +68,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
           {/* Thumbnails */}
           {product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
-              {product.images.map((img, i) => (
+              {product.images.map((img: string, i: number) => (
                 <div
                   key={i}
                   className="relative aspect-square overflow-hidden rounded bg-beige"
