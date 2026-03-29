@@ -346,7 +346,7 @@ export default function CheckoutPage() {
             </h2>
 
             <div className="space-y-4 mb-6">
-              {cart.items.map((item) => (
+              {cart.items.map((item: any) => (
                 <div
                   key={item.id}
                   className="flex justify-between items-center border-b border-border pb-3"

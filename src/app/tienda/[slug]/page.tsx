@@ -109,7 +109,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
           {/* Variant selector + Add to cart (client component) */}
           <div className="mt-8">
             <VariantSelector
-              variants={product.variants.map((v) => ({
+              variants={product.variants.map((v: any) => ({
                 id: v.id,
                 size: v.size,
                 color: v.color,
