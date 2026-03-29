@@ -37,8 +37,8 @@ export default async function ProductDetailPage({ params }: PDPProps) {
   if (!product) notFound()
 
   const mainImage = product.images?.[0]
-  const hasStock = product.variants.some((v) => v.stock > 0)
-  const defaultVariant = product.variants.find((v) => v.stock > 0) ?? product.variants[0]
+  const hasStock = product.variants.some((v: VariantData) => v.stock > 0)
+  const defaultVariant = product.variants.find((v: VariantData) => v.stock > 0) ?? product.variants[0]
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
