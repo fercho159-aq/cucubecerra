@@ -53,7 +53,7 @@ export async function createOrder(data: {
       const orderNumber = `CB-${nextNumber.toString().padStart(4, '0')}`
 
       // Calculate subtotal from variant prices (use product price since variants don't have price)
-      const subtotal = cart.items.reduce((sum, item) => {
+      const subtotal = cart.items.reduce((sum: number, item: any) => {
         return sum + Number(item.variant.product.price) * item.quantity
       }, 0)
 
@@ -76,7 +76,7 @@ export async function createOrder(data: {
           shipping,
           total,
           items: {
-            create: cart.items.map((item) => ({
+            create: cart.items.map((item: any) => ({
               variantId: item.variantId,
               quantity: item.quantity,
               unitPrice: item.variant.product.price,

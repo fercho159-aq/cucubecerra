@@ -156,7 +156,7 @@ export async function getCartCount() {
 
   if (!cart) return 0
 
-  return cart.items.reduce((sum, item) => sum + item.quantity, 0)
+  return cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0)
 }
 
 export async function clearCart() {
