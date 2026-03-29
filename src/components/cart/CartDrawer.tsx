@@ -51,7 +51,7 @@ export default function CartDrawer({ open, onClose, items }: CartDrawerProps) {
     return () => document.removeEventListener('keydown', handleEscape)
   }, [open, onClose])
 
-  const subtotal = items.reduce((sum, item) => {
+  const subtotal = items.reduce((sum: number, item: any) => {
     const price =
       typeof item.variant.product.price === 'string'
         ? parseFloat(item.variant.product.price)

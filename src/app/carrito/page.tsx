@@ -22,7 +22,7 @@ export default async function CarritoPage() {
   const cart = await getCart()
   const items = cart.items
 
-  const subtotal = items.reduce((sum, item) => {
+  const subtotal = items.reduce((sum: number, item: any) => {
     const price =
       typeof item.variant.product.price === 'string'
         ? parseFloat(item.variant.product.price)
@@ -62,7 +62,7 @@ export default async function CarritoPage() {
         {/* Items */}
         <div className="lg:col-span-2">
           <CartItemsList
-            items={items.map((item) => ({
+            items={items.map((item: any) => ({
               id: item.id,
               quantity: item.quantity,
               variant: {
